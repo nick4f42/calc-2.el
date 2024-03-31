@@ -1,0 +1,40 @@
+#+title: calc-2.el - UX Tweaks for the GNU Emacs Calculator
+#+author: Nick OBrien
+
+=calc-2= provides various user experience improvements for the GNU
+Emacs Calculator.
+
+* Features
+
+- Documentation strings for Calc functions and commands.
+
+  After pressing =x= (=calc-execute-extended-command=) in a Calc
+  buffer with a package like [[https://github.com/minad/marginalia][marginalia]] installed, you can readily see
+  documentation for each command.
+
+- =completing-read-multiple= interface for reading unit expressions
+  with annotations.
+
+  Calc provides a command to view the units table, but with =calc-2=
+  you get a minibuffer prompt with completion and annotations when
+  using =calc-convert-units= and similar commands.
+
+* Installation
+
+Using [[https://github.com/progfolio/elpaca][elpaca]] and =elpaca-use-package-mode=:
+
+#+begin_src emacs-lisp
+(use-package calc-2
+  :ensure ( calc-2 :type git :host github :repo "nick4f42/calc-2.el")
+  :demand t
+  :config
+  (calc-2-minor-mode))
+#+end_src
+
+* Planned Features
+
+- =completing-read= interface for storing and recalling Calc variables
+
+- Completion at point in algebraic entry
+
+- Transient interface for Calc commands
