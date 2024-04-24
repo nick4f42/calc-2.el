@@ -42,6 +42,7 @@
   "<remap> <calc-convert-units>" 'calc-2-convert-units
   "<remap> <calc-convert-exact-units>" 'calc-2-convert-exact-units)
 
+;;;###autoload
 (define-minor-mode calc-2-minor-mode
   "Enables tweaks for the GNU Emacs Calculator."
   :global t
@@ -87,6 +88,7 @@ characters, or a symbol with a value of said list."
 
 (defun calc-2-units-read-unit-string (prompt &optional predicate)
   "Read a math unit with `completing-read-multiple'."
+  (defvar crm-separator)
   (let ((hook (make-symbol "--minibuffer-exit--"))
 	(crm-separator calc-2-unit-crm-separator))
     ;; `completing-read-multiple' returns the string split by the separator.
