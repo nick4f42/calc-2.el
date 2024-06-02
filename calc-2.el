@@ -98,39 +98,29 @@ characters, or a symbol with a value of said list."
     (unwind-protect
 	(progn
 	  (add-hook 'minibuffer-exit-hook hook)
-	  (car (completing-read-multiple
-		prompt
-		(calc-2-units--collection-function)
-		predicate)))
+	  (let ((completion-extra-properties
+		 (list :annotation-function #'calc-2-units--annotation-function)))
+	    (car (completing-read-multiple
+		  prompt
+		  (calc-2-units--table)
+		  predicate))))
       (remove-hook 'minibuffer-exit-hook hook))))
 
-(defun calc-2-units--collection-function ()
-  (let ((collection
-	 (nconc
+(defun calc-2-units--table ()
+  (nconc
+   (cl-loop
+    for (unit) in math-standard-units-systems
+    collect unit)
+   (cl-loop
+    for (unit) in (progn (math-build-units-table) math-units-table)
+    for prefixes = (alist-get unit calc-2-unit-completion-prefixes)
+    do (if (symbolp prefixes)
+	   (setq prefixes (symbol-value prefixes)))
+    nconc
+    (cons (symbol-name unit)
 	  (cl-loop
-	   for (unit) in math-standard-units-systems
-	   collect unit)
-	  (cl-loop
-	   for (unit) in (progn (math-build-units-table) math-units-table)
-	   for prefixes = (alist-get unit calc-2-unit-completion-prefixes)
-	   do (if (symbolp prefixes)
-		  (setq prefixes (symbol-value prefixes)))
-	   nconc
-	   (cons (symbol-name unit)
-		 (cl-loop
-		  for prefix in prefixes
-		  collect (format "%c%s" prefix unit)))))))
-    (lambda (string pred flag)
-      (pcase flag
-	('nil (try-completion string collection pred))
-	('t (all-completions string collection pred))
-	('lambda (test-completion string collection pred))
-	(`(boundaries . ,suffix)
-	 (completion-boundaries string collection pred suffix))
-	('metadata
-	 `(metadata
-	   (category . math-unit)
-	   (annotation-function . calc-2-units--annotation-function)))))))
+	   for prefix in prefixes
+	   collect (format "%c%s" prefix unit))))))
 
 (defvar calc-num-units)
 (defvar calc-den-units)
